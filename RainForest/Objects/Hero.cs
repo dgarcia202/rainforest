@@ -65,7 +65,7 @@ namespace RainForest.Objects
                 }
                 else
                 {
-                    _currentHorizontalSpeed = _currentHorizontalSpeed < -delta ?
+                    _currentHorizontalSpeed = _currentHorizontalSpeed + delta <= 0.0 ?
                         (_currentHorizontalSpeed + delta) :
                         0.0;
                 }
@@ -77,7 +77,8 @@ namespace RainForest.Objects
             // Animation
             if (_currentHorizontalSpeed != 0.0)
             {
-                _animationWalk.AnimationSpeedFactor = MAX_SPEED / Math.Abs(_currentHorizontalSpeed);
+                _animationWalk.AnimationSpeedFactor = 2 - (Math.Abs(_currentHorizontalSpeed) / MAX_SPEED);
+
                 _sprite.Animation = _animationWalk;
             }
             else
