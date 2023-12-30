@@ -1,13 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using RainForest.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RainForest.Objects
 {
@@ -15,6 +9,7 @@ namespace RainForest.Objects
     {
         private const double MAX_SPEED = 2.5;
         private const double HORIZONTAL_ACCEL = 3.0;
+        private const double HORIZONTAL_DECCEL = 6.0;
 
         private double _currentHorizontalSpeed = 0.0;
 
@@ -24,15 +19,15 @@ namespace RainForest.Objects
 
         public Hero(ContentManager content) : base(content)
         {
-            var sprite = new Sprite(Content, "Sprite-0001-Sheet", 64, 64);
-            sprite.Animation = new Animations.HeroWalk(content, sprite);
-            sprite.SetPosition(400, 600);
-            AddObject("sprite", sprite);
+            AddObject("sprite", new Sprite(Content, "Sprite-0001-Sheet", 64, 64));
         }
 
         public override void Initialize()
         {
             _sprite = GetObject("sprite") as Sprite;
+            _sprite.Animation = new Animations.HeroIdle(Content, _sprite);
+            _sprite.SetPosition(400, 600);
+
             base.Initialize();
         }
 
@@ -43,24 +38,26 @@ namespace RainForest.Objects
            
             _sprite.FlipHorizontally = !(leftStick > 0);
 
-            _currentHorizontalSpeed += (HORIZONTAL_ACCEL * (gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0));
-            if (_currentHorizontalSpeed > (MAX_SPEED * leftStick))
+            if (leftStick != 0) // There´s horizontal move input.
             {
-                _currentHorizontalSpeed = (MAX_SPEED * leftStick);
+                _currentHorizontalSpeed += (HORIZONTAL_ACCEL * (gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0));
+                if (_currentHorizontalSpeed > (MAX_SPEED * leftStick))
+                {
+                    _currentHorizontalSpeed = (MAX_SPEED * leftStick);
+                }
+                else if (_currentHorizontalSpeed < -(MAX_SPEED * leftStick))
+                {
+                    _currentHorizontalSpeed = -(MAX_SPEED * leftStick);
+                }
             }
-            else if (_currentHorizontalSpeed < -(MAX_SPEED * leftStick))
+            else    // There´s no input for horizontal move decceleration quicks´s in.
             {
-                _currentHorizontalSpeed = -(MAX_SPEED * leftStick);
+
             }
 
             _sprite.X += _currentHorizontalSpeed;
 
             base.Update(gameTime);
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
         }
     }
 }

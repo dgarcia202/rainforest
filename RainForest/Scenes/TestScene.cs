@@ -13,6 +13,8 @@ namespace RainForest.Scenes
         SpriteFont _font;
         Hero _hero;
 
+        private float _leftStickX;
+
         public TestScene(ContentManager content) : base(content)
         {
             AddObject("hero", new Hero(content));
@@ -30,18 +32,21 @@ namespace RainForest.Scenes
             base.LoadContent();
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Update(GameTime gameTime)
         {
-            if (Visible)
-            {
-                var sb = new StringBuilder();
-                sb.Append($"Velocity: {_hero.CurrentHorizontalSpeed}\r\n");
-                sb.Append($"Joy: {GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X}");
+            _leftStickX = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X;
+            base.Update(gameTime);
+        }
 
-                spriteBatch.DrawString(_font, sb.ToString(), new Vector2(700f, 100f), Color.White);
-            }
+        protected override void InternalDraw(SpriteBatch spriteBatch)
+        {
+            var sb = new StringBuilder();
+            sb.Append($"Velocity: {_hero.CurrentHorizontalSpeed}\r\n");
+            sb.Append($"Joy: {_leftStickX}");
 
-            base.Draw(spriteBatch);
+            spriteBatch.DrawString(_font, sb.ToString(), new Vector2(0f, 0f), Color.White);
+
+            base.InternalDraw(spriteBatch);
         }
     }
 }

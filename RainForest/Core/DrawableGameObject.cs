@@ -6,18 +6,26 @@ namespace RainForest.Core
 {
     internal abstract class DrawableGameObject : GameObject
     {
+        public bool IsVisible { get; set; } = true;
+
         protected DrawableGameObject(ContentManager content) : base(content)
         {
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            if (Visible)
+            if (IsVisible)
             {
-                foreach (var child in Children.Select(x => x.Value as DrawableGameObject))
-                {
-                    child.Draw(spriteBatch);
-                }
+                InternalDraw(spriteBatch);
+            }
+        }
+
+        protected virtual void InternalDraw(SpriteBatch spriteBatch)
+        {
+            foreach (var child in Children.Values)
+            {
+                if (child is DrawableGameObject drawable)
+                    drawable.InternalDraw(spriteBatch);
             }
         }
     }

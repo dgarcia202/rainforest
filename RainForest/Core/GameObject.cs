@@ -16,7 +16,6 @@ namespace RainForest.Core
         protected GameObject(ContentManager content)
         {
             Content = content;
-            Visible = true;
         }
 
         protected void AddObject(string name, GameObject obj)
@@ -24,7 +23,7 @@ namespace RainForest.Core
             _children[name] = obj;
         }
 
-        public bool Visible { get; set; }
+        public bool IsEnabled { get; set; } = true;
 
         protected IDictionary<string, GameObject> Children => _children;
 

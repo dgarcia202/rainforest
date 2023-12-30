@@ -11,8 +11,8 @@ namespace RainForest.Core
         private double _x, _y;
         private readonly string _textureName;
         private int _width, _height;
-        private Animation _animation;
         private bool _flipHorizontally;
+        private Animation _animation;
 
         public Sprite(ContentManager content, string textureName, int width, int height) : base(content)
         {
@@ -23,7 +23,18 @@ namespace RainForest.Core
 
         public double X { get => _x; set => _x = value; }
         public double Y { get => _y; set => _y = value; }
-        public Animation Animation { get => _animation; set => _animation = value; }
+        public Animation Animation
+        {
+            get
+            {
+                return GetObject("animation") as Animation;
+            }
+
+            set
+            {
+                AddObject("animation", value);
+            }
+        }
         public bool FlipHorizontally { get => _flipHorizontally; set => _flipHorizontally = value; }
 
         public void SetPosition(double x, double y)
@@ -41,9 +52,9 @@ namespace RainForest.Core
 
         public override void Update(GameTime gameTime)
         {
-            if (_animation is not null)
+            if (Animation is not null)
             {
-                _animation.Update(gameTime);
+                Animation.Update(gameTime);
             }
             base.Update(gameTime);
         }
@@ -53,18 +64,18 @@ namespace RainForest.Core
             _sheet = Content.Load<Texture2D>(_textureName);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        protected override void InternalDraw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_sheet,
                 new Rectangle(Convert.ToInt32(_x), Convert.ToInt32(_y), _width, _height),                   // Destination.
-                new Rectangle(_animation.FrameX * _width, _animation.FrameY * _height, _width, _height),    // Origin.
+                new Rectangle(Animation.FrameX * _width, Animation.FrameY * _height, _width, _height),    // Origin.
                 Color.White,
                 0f,
                 Vector2.Zero,
                 _flipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 0f);
 
-            base.Draw(spriteBatch);
+            base.InternalDraw(spriteBatch);
         }
     }
 }
