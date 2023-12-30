@@ -12,7 +12,6 @@ namespace RainForest.Core
         private readonly string _textureName;
         private int _width, _height;
         private bool _flipHorizontally;
-        private Animation _animation;
 
         public Sprite(ContentManager content, string textureName, int width, int height) : base(content)
         {
@@ -47,16 +46,6 @@ namespace RainForest.Core
         {
             this._x = x;
             this._y = y;
-        }
-
-
-        public override void Update(GameTime gameTime)
-        {
-            if (Animation is not null)
-            {
-                Animation.Update(gameTime);
-            }
-            base.Update(gameTime);
         }
 
         public override void LoadContent()
