@@ -6,7 +6,6 @@ namespace RainForest.Animations
 {
     internal class HeroWalk : Animation
     {
-        private const float INTERVAL = 200f;
         private const int LAST_FRAME = 5;
 
         private double _lastFrameTime = 0.0;
@@ -15,6 +14,7 @@ namespace RainForest.Animations
         {
             FrameX = 0;
             FrameY = 0;
+            Interval = 150.0;
         }
 
         public override void Update(GameTime gameTime)
@@ -22,7 +22,7 @@ namespace RainForest.Animations
             if (_lastFrameTime == 0.0)
                 _lastFrameTime = gameTime.TotalGameTime.TotalMilliseconds;
 
-            if (gameTime.TotalGameTime.TotalMilliseconds - _lastFrameTime >= INTERVAL)
+            if (gameTime.TotalGameTime.TotalMilliseconds - _lastFrameTime >= (Interval * AnimationSpeedFactor))
             {
                 if (FrameX == LAST_FRAME)
                     FrameX = 0;

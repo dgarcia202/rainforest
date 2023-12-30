@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using RainForest.Core;
+using System;
 
 namespace RainForest.Objects
 {
@@ -14,18 +15,21 @@ namespace RainForest.Objects
         private double _currentHorizontalSpeed = 0.0;
 
         private Sprite _sprite;
+        private Animation _animationWalk, _animationIdle;
 
         public double CurrentHorizontalSpeed { get => _currentHorizontalSpeed; }
 
         public Hero(ContentManager content) : base(content)
         {
             AddObject("sprite", new Sprite(Content, "Sprite-0001-Sheet", 64, 64));
+            _animationIdle = new Animations.HeroIdle(Content, _sprite);
+            _animationWalk = new Animations.HeroWalk(Content, _sprite);
         }
 
         public override void Initialize()
         {
             _sprite = GetObject("sprite") as Sprite;
-            _sprite.Animation = new Animations.HeroIdle(Content, _sprite);
+            _sprite.Animation = _animationIdle;
             _sprite.SetPosition(400, 600);
 
             base.Initialize();
@@ -52,7 +56,7 @@ namespace RainForest.Objects
             }
             else if (_currentHorizontalSpeed != 0.0)    // There´s no input for horizontal move decceleration quicks in.
             {
-                var delta = (HORIZONTAL_ACCEL * (gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0));
+                var delta = (HORIZONTAL_DECCEL * (gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0));
                 if (_currentHorizontalSpeed > 0.0)
                 {
                     _currentHorizontalSpeed = _currentHorizontalSpeed > delta ?
@@ -69,6 +73,17 @@ namespace RainForest.Objects
             }
 
             _sprite.X += _currentHorizontalSpeed;
+
+            // Animation
+            if (_currentHorizontalSpeed != 0.0)
+            {
+                _animationWalk.AnimationSpeedFactor = MAX_SPEED / Math.Abs(_currentHorizontalSpeed);
+                _sprite.Animation = _animationWalk;
+            }
+            else
+            {
+                _sprite.Animation = _animationIdle;
+            }
 
             base.Update(gameTime);
         }
