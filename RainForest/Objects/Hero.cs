@@ -32,8 +32,8 @@ namespace RainForest.Objects
             _sprite = GetComponent("sprite") as Sprite;
             _sprite.Animation = _animationIdle;
 
-            X = 400.0;
-            Y = 600.0;
+            X = .0;
+            Y = .0;
 
             base.Initialize();
         }
@@ -72,7 +72,6 @@ namespace RainForest.Objects
                         (_currentHorizontalSpeed + delta) :
                         0.0;
                 }
-                
             }
 
             X += _currentHorizontalSpeed;

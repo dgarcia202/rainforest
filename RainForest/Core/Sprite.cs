@@ -31,6 +31,7 @@ namespace RainForest.Core
                 AddComponent("animation", value);
             }
         }
+
         public bool FlipHorizontally { get => _flipHorizontally; set => _flipHorizontally = value; }
 
         public override void LoadContent()
@@ -46,7 +47,7 @@ namespace RainForest.Core
                 Color.White,
                 0f,
                 Vector2.Zero,
-                _flipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                SpriteEffects.FlipVertically | (_flipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None),
                 0f);
 
             base.InternalDraw(spriteBatch);
