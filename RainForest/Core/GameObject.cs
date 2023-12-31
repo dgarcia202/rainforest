@@ -9,25 +9,30 @@ namespace RainForest.Core
     internal abstract class GameObject
     {
         private const int DEFAULT_CHILDREN_CAPACITY = 20;
-
-        protected readonly ContentManager Content;
         private readonly IDictionary<string, GameObject> _children = new Dictionary<string, GameObject>(DEFAULT_CHILDREN_CAPACITY);
+        private GameObject _parent;
+        protected readonly ContentManager Content;
+
+        protected IDictionary<string, GameObject> Children => _children;
+        public double X { get; set; }
+        public double Y { get; set; }
+        public bool IsVisible { get; set; } = true;
+        public GameObject Parent { get => _parent; set => _parent = value; }
+        public double AbsoluteX => X + _parent.X;
+        public double AbsoluteY => Y + _parent.Y;
 
         protected GameObject(ContentManager content)
         {
             Content = content;
         }
 
-        protected void AddObject(string name, GameObject obj)
+        protected void AddComponent(string name, GameObject obj)
         {
+            obj.Parent = this;
             _children[name] = obj;
         }
 
-        public bool IsEnabled { get; set; } = true;
-
-        protected IDictionary<string, GameObject> Children => _children;
-
-        public GameObject GetObject(string name)
+        public GameObject GetComponent(string name)
         {
             return _children[name];
         }

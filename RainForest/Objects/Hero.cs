@@ -21,16 +21,19 @@ namespace RainForest.Objects
 
         public Hero(ContentManager content) : base(content)
         {
-            AddObject("sprite", new Sprite(Content, "Sprite-0001-Sheet", 64, 64));
-            _animationIdle = new Animations.HeroIdle(Content, _sprite);
-            _animationWalk = new Animations.HeroWalk(Content, _sprite);
+            AddComponent("sprite", new Sprite(Content, "Sprite-0001-Sheet", 64, 64));
         }
 
         public override void Initialize()
         {
-            _sprite = GetObject("sprite") as Sprite;
+            _animationIdle = new Animations.HeroIdle(Content, _sprite);
+            _animationWalk = new Animations.HeroWalk(Content, _sprite);
+
+            _sprite = GetComponent("sprite") as Sprite;
             _sprite.Animation = _animationIdle;
-            _sprite.SetPosition(400, 600);
+
+            X = 400.0;
+            Y = 600.0;
 
             base.Initialize();
         }
@@ -72,7 +75,7 @@ namespace RainForest.Objects
                 
             }
 
-            _sprite.X += _currentHorizontalSpeed;
+            X += _currentHorizontalSpeed;
 
             // Animation
             if (_currentHorizontalSpeed != 0.0)

@@ -17,12 +17,12 @@ namespace RainForest.Scenes
 
         public TestScene(ContentManager content) : base(content)
         {
-            AddObject("hero", new Hero(content));
+            AddComponent("hero", new Hero(content));
         }
 
         public override void Initialize()
         {
-            _hero = GetObject("hero") as Hero;
+            _hero = GetComponent("hero") as Hero;
             base.Initialize();
         }
 

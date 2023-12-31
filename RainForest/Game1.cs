@@ -41,6 +41,13 @@ namespace RainForest
 
             // TODO: use this.Content to load your game content here
             _scene.LoadContent();
+
+            Texture2D rect = new Texture2D(_graphics.GraphicsDevice, 80, 30);
+            Color[] data = new Color[80 * 30];
+            for (int i = 0; i < data.Length; ++i)
+                data[i] = Color.Chocolate;
+
+            rect.SetData(data);
         }
 
         protected override void Update(GameTime gameTime)
