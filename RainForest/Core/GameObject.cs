@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace RainForest.Core
 {
-    internal abstract class GameObject
+    public abstract class GameObject
     {
         private const int DEFAULT_CHILDREN_CAPACITY = 20;
         private readonly IDictionary<string, GameObject> _children = new Dictionary<string, GameObject>(DEFAULT_CHILDREN_CAPACITY);
@@ -14,12 +14,12 @@ namespace RainForest.Core
         protected readonly ContentManager Content;
 
         protected IDictionary<string, GameObject> Children => _children;
-        public double X { get; set; }
-        public double Y { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
         public bool IsVisible { get; set; } = true;
         public GameObject Parent { get => _parent; set => _parent = value; }
-        public double AbsoluteX => X + _parent.X;
-        public double AbsoluteY => Y + _parent.Y;
+        public float AbsoluteX => X + _parent.X;
+        public float AbsoluteY => Y + _parent.Y;
 
         protected GameObject(ContentManager content)
         {

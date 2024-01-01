@@ -8,20 +8,21 @@ namespace RainForest.Objects
 {
     internal class Hero : DrawableGameObject
     {
-        private const double MAX_SPEED = 2.5;
-        private const double HORIZONTAL_ACCEL = 3.0;
-        private const double HORIZONTAL_DECCEL = 6.0;
+        private const float MAX_SPEED = 2.5f;
+        private const float HORIZONTAL_ACCEL = 3.0f;
+        private const float HORIZONTAL_DECCEL = 6.0f;
 
-        private double _currentHorizontalSpeed = 0.0;
+        private float _currentHorizontalSpeed = 0.0f;
 
         private Sprite _sprite;
         private Animation _animationWalk, _animationIdle;
 
-        public double CurrentHorizontalSpeed { get => _currentHorizontalSpeed; }
+        public float CurrentHorizontalSpeed { get => _currentHorizontalSpeed; }
 
         public Hero(ContentManager content) : base(content)
         {
             AddComponent("sprite", new Sprite(Content, "Sprite-0001-Sheet", 64, 64));
+            AddComponent("collider-1", new Collider(Content, 29f, 3f, 10f, 50f, Color.Red));
         }
 
         public override void Initialize()
@@ -32,8 +33,8 @@ namespace RainForest.Objects
             _sprite = GetComponent("sprite") as Sprite;
             _sprite.Animation = _animationIdle;
 
-            X = .0;
-            Y = .0;
+            X = 0f;
+            Y = 0f;
 
             base.Initialize();
         }
@@ -41,13 +42,14 @@ namespace RainForest.Objects
         public override void Update(GameTime gameTime)
         {
             // Movement
-            var leftStick = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X;
+            float leftStick = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X;
+            float ellapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalMilliseconds);
 
             if (leftStick != 0f) // There´s horizontal move input.
             {
                 _sprite.FlipHorizontally = !(leftStick > 0f);
 
-                _currentHorizontalSpeed += (HORIZONTAL_ACCEL * (gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0));
+                _currentHorizontalSpeed += (HORIZONTAL_ACCEL * (ellapsedTime / 1000f));
                 if (_currentHorizontalSpeed > (MAX_SPEED * leftStick))
                 {
                     _currentHorizontalSpeed = (MAX_SPEED * leftStick);
@@ -59,28 +61,27 @@ namespace RainForest.Objects
             }
             else if (_currentHorizontalSpeed != 0.0)    // There´s no input for horizontal move decceleration quicks in.
             {
-                var delta = (HORIZONTAL_DECCEL * (gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0));
-                if (_currentHorizontalSpeed > 0.0)
+                float delta = (HORIZONTAL_DECCEL * (ellapsedTime / 1000f));
+                if (_currentHorizontalSpeed > 0f)
                 {
                     _currentHorizontalSpeed = _currentHorizontalSpeed > delta ?
                         (_currentHorizontalSpeed - delta) :
-                        0.0;
+                        0f;
                 }
                 else
                 {
-                    _currentHorizontalSpeed = _currentHorizontalSpeed + delta <= 0.0 ?
+                    _currentHorizontalSpeed = _currentHorizontalSpeed + delta <= 0f ?
                         (_currentHorizontalSpeed + delta) :
-                        0.0;
+                        0f;
                 }
             }
 
             X += _currentHorizontalSpeed;
 
             // Animation
-            if (_currentHorizontalSpeed != 0.0)
+            if (_currentHorizontalSpeed != 0f)
             {
                 _animationWalk.AnimationSpeedFactor = 2 - (Math.Abs(_currentHorizontalSpeed) / MAX_SPEED);
-
                 _sprite.Animation = _animationWalk;
             }
             else
