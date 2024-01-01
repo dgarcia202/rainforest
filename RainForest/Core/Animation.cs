@@ -18,12 +18,12 @@ namespace RainForest.Core
         private double _interval = 200f;
         private double _animationSpeedFactor = 1f;
 
-        public Animation(ContentManager content, Sprite sprite) : base(content)
+        public Animation(Sprite sprite)
         {
             _sprite = sprite;
         }
 
-        public Animation(ContentManager content, Sprite sprite, float interval) : this(content, sprite)
+        public Animation(Sprite sprite, float interval) : this(sprite)
         {
             _interval = interval;
         }

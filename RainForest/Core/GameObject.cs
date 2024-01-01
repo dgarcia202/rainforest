@@ -11,7 +11,6 @@ namespace RainForest.Core
         private const int DEFAULT_CHILDREN_CAPACITY = 20;
         private readonly IDictionary<string, GameObject> _children = new Dictionary<string, GameObject>(DEFAULT_CHILDREN_CAPACITY);
         private GameObject _parent;
-        protected readonly ContentManager Content;
 
         protected IDictionary<string, GameObject> Children => _children;
         public float X { get; set; }
@@ -21,12 +20,17 @@ namespace RainForest.Core
         public float AbsoluteX => X + _parent.X;
         public float AbsoluteY => Y + _parent.Y;
 
-        protected GameObject(ContentManager content)
-        {
-            Content = content;
+        public Vector2 AbsolutePosition { get => new Vector2(AbsoluteX, AbsoluteY); }
+        public Vector2 Position { 
+            get => new Vector2(X, Y); 
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+            }
         }
 
-        protected void AddComponent(string name, GameObject obj)
+        public void AddComponent(string name, GameObject obj)
         {
             obj.Parent = this;
             _children[name] = obj;
@@ -34,7 +38,7 @@ namespace RainForest.Core
 
         public GameObject GetComponent(string name)
         {
-            return _children[name];
+            return _children.TryGetValue(name, out GameObject obj) ? obj : null;
         }
 
         public virtual void Initialize()

@@ -12,12 +12,12 @@ namespace RainForest.Objects
         private const float HORIZONTAL_ACCEL = 3.0f;
         private const float HORIZONTAL_DECCEL = 6.0f;
 
-        private float _currentHorizontalSpeed = 0.0f;
+        private Vector2 _velocity = Vector2.Zero;
 
         private Sprite _sprite;
         private Animation _animationWalk, _animationIdle;
 
-        public float CurrentHorizontalSpeed { get => _currentHorizontalSpeed; }
+        public Vector2 Velocity { get => _velocity; set => _velocity = value; }
 
         public Hero(ContentManager content) : base(content)
         {
@@ -27,8 +27,8 @@ namespace RainForest.Objects
 
         public override void Initialize()
         {
-            _animationIdle = new Animations.HeroIdle(Content, _sprite);
-            _animationWalk = new Animations.HeroWalk(Content, _sprite);
+            _animationIdle = new Animations.HeroIdle(_sprite);
+            _animationWalk = new Animations.HeroWalk(_sprite);
 
             _sprite = GetComponent("sprite") as Sprite;
             _sprite.Animation = _animationIdle;
@@ -49,39 +49,39 @@ namespace RainForest.Objects
             {
                 _sprite.FlipHorizontally = !(leftStick > 0f);
 
-                _currentHorizontalSpeed += (HORIZONTAL_ACCEL * (ellapsedTime / 1000f));
-                if (_currentHorizontalSpeed > (MAX_SPEED * leftStick))
+                _velocity.X += (HORIZONTAL_ACCEL * (ellapsedTime / 1000f));
+                if (_velocity.X > (MAX_SPEED * leftStick))
                 {
-                    _currentHorizontalSpeed = (MAX_SPEED * leftStick);
+                    _velocity.X = (MAX_SPEED * leftStick);
                 }
-                else if (_currentHorizontalSpeed < -(MAX_SPEED * leftStick))
+                else if (_velocity.X < -(MAX_SPEED * leftStick))
                 {
-                    _currentHorizontalSpeed = -(MAX_SPEED * leftStick);
+                    _velocity.X = -(MAX_SPEED * leftStick);
                 }
             }
-            else if (_currentHorizontalSpeed != 0.0)    // There´s no input for horizontal move decceleration quicks in.
+            else if (_velocity.X != 0.0)    // There´s no input for horizontal move decceleration quicks in.
             {
                 float delta = (HORIZONTAL_DECCEL * (ellapsedTime / 1000f));
-                if (_currentHorizontalSpeed > 0f)
+                if (_velocity.X > 0f)
                 {
-                    _currentHorizontalSpeed = _currentHorizontalSpeed > delta ?
-                        (_currentHorizontalSpeed - delta) :
+                    _velocity.X = _velocity.X > delta ?
+                        (_velocity.X - delta) :
                         0f;
                 }
                 else
                 {
-                    _currentHorizontalSpeed = _currentHorizontalSpeed + delta <= 0f ?
-                        (_currentHorizontalSpeed + delta) :
+                    _velocity.X = _velocity.X + delta <= 0f ?
+                        (_velocity.X + delta) :
                         0f;
                 }
             }
 
-            X += _currentHorizontalSpeed;
+            X += _velocity.X;
 
             // Animation
-            if (_currentHorizontalSpeed != 0f)
+            if (_velocity.X != 0f)
             {
-                _animationWalk.AnimationSpeedFactor = 2 - (Math.Abs(_currentHorizontalSpeed) / MAX_SPEED);
+                _animationWalk.AnimationSpeedFactor = 2 - (Math.Abs(_velocity.X) / MAX_SPEED);
                 _sprite.Animation = _animationWalk;
             }
             else

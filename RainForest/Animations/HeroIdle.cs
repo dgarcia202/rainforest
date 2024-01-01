@@ -16,7 +16,7 @@ namespace RainForest.Animations
 
         private double _lastFrameTime = 0.0;
 
-        public HeroIdle(ContentManager content, Sprite sprite) : base(content, sprite)
+        public HeroIdle(Sprite sprite) : base(sprite)
         {
             FrameX = 0;
             FrameY = 1;

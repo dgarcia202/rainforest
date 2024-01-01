@@ -2,9 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using RainForest.Core;
-using RainForest.Objects;
 using RainForest.Scenes;
-using System;
 
 namespace RainForest
 {
@@ -39,9 +37,9 @@ namespace RainForest
             _spritesEffect.LightingEnabled = false;
 
             // components
-            _camera = new Camera();
             _scene = new TestScene(Content);
             _scene.Initialize();
+            _camera = _scene.GetComponent("camera") as Camera;
 
             base.Initialize();
         }
@@ -51,7 +49,6 @@ namespace RainForest
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _primitivesBatch = new PrimitivesBatch(GraphicsDevice, _camera);
 
-            // TODO: use this.Content to load your game content here
             _scene.LoadContent();
         }
 
@@ -60,7 +57,6 @@ namespace RainForest
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
             _scene.Update(gameTime);
 
             base.Update(gameTime);

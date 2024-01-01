@@ -7,10 +7,13 @@ namespace RainForest.Core
 {
     public abstract class DrawableGameObject : GameObject
     {
+        protected readonly ContentManager Content;
+
         protected virtual IEnumerable<PrimitiveRect> Shapes { get => Array.Empty<PrimitiveRect>(); }
 
-        protected DrawableGameObject(ContentManager content) : base(content)
+        protected DrawableGameObject(ContentManager content)
         {
+            Content = content;
         }
 
         public void Draw(SpriteBatch spriteBatch)

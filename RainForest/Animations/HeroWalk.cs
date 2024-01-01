@@ -10,7 +10,7 @@ namespace RainForest.Animations
 
         private double _lastFrameTime = 0.0;
 
-        public HeroWalk(ContentManager content, Sprite sprite) : base(content, sprite)
+        public HeroWalk(Sprite sprite) : base(sprite)
         {
             FrameX = 0;
             FrameY = 0;
