@@ -10,8 +10,10 @@ namespace RainForest.Scenes
 {
     internal class TestScene : DrawableGameObject
     {
-        SpriteFont _font;
-        Hero _hero;
+        private SpriteFont _font;
+        private Hero _hero;
+        
+
 
         private float _leftStickX;
         private double _fps;
@@ -49,7 +51,7 @@ namespace RainForest.Scenes
             sb.Append($"Joy: {_leftStickX:0.000}\r\n");
             sb.Append($"Hero: X:{_hero.X:0.000}, Y:{_hero.Y:0.000}\r\n");
 
-            spriteBatch.DrawString(_font, sb.ToString(), new Vector2(0f, 600f), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
+            spriteBatch.DrawString(_font, sb.ToString(), new Vector2(0f, 0f), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
 
             base.InternalDraw(spriteBatch);
         }

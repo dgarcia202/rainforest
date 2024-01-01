@@ -13,9 +13,9 @@ namespace RainForest
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private PrimitivesBatch _primitivesBatch;
-
-        private TestScene _scene;
         private BasicEffect _spritesEffect;
+        private Camera _camera;
+        private TestScene _scene;
 
         public Game1()
         {
@@ -28,8 +28,8 @@ namespace RainForest
         {
             // TODO: Add your initialization logic here
             _graphics.IsFullScreen = false;
-            _graphics.PreferredBackBufferWidth = Constants.SCREEN_WIDTH;
-            _graphics.PreferredBackBufferHeight = Constants.SCREEN_HEIGHT;
+            _graphics.PreferredBackBufferWidth = (int)Constants.SCREEN_WIDTH;
+            _graphics.PreferredBackBufferHeight = (int)Constants.SCREEN_HEIGHT;
             _graphics.ApplyChanges();
 
             _spritesEffect = new BasicEffect(GraphicsDevice);
@@ -37,11 +37,9 @@ namespace RainForest
             _spritesEffect.TextureEnabled = true;
             _spritesEffect.FogEnabled = false;
             _spritesEffect.LightingEnabled = false;
-            _spritesEffect.World = Matrix.Identity;
-            _spritesEffect.View = Matrix.Identity;
-            _spritesEffect.Projection = Matrix.Identity;
 
             // components
+            _camera = new Camera();
             _scene = new TestScene(Content);
             _scene.Initialize();
 
@@ -51,7 +49,7 @@ namespace RainForest
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _primitivesBatch = new PrimitivesBatch(GraphicsDevice);
+            _primitivesBatch = new PrimitivesBatch(GraphicsDevice, _camera);
 
             // TODO: use this.Content to load your game content here
             _scene.LoadContent();
@@ -73,8 +71,17 @@ namespace RainForest
             GraphicsDevice.Clear(Color.DarkGray);
 
             // Projection matrix.
-            var viewPort = _graphics.GraphicsDevice.Viewport;
-            _spritesEffect.Projection = Matrix.CreateOrthographicOffCenter(0f, viewPort.Width, 0f, viewPort.Height, 0f, 1f);
+            if (_camera == null )
+            {
+                var viewPort = _graphics.GraphicsDevice.Viewport;
+                _spritesEffect.Projection = Matrix.CreateOrthographicOffCenter(0f, viewPort.Width, 0f, viewPort.Height, 0f, 1f);
+            }
+            else
+            {
+                _camera.UpdateMatrices();
+                _spritesEffect.View = _camera.ViewMatrix;
+                _spritesEffect.Projection = _camera.ProjectionMatrix;
+            }
 
             // Sprites.
             _spriteBatch.Begin(

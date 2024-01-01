@@ -13,6 +13,7 @@ namespace RainForest.Core
     {
         private BasicEffect _effect;
         private GraphicsDevice _graphicsDevice;
+        private Camera _camera;
         private const int BUFFER_SIZE = 1024;
         private VertexPositionColor[] _vertices;
         private int[] _indices;
@@ -21,7 +22,9 @@ namespace RainForest.Core
         private int _primitiveCount;
         private bool _hasBegun;
 
-        public PrimitivesBatch(GraphicsDevice graphicsDevice)
+        public Camera Camera { get => _camera; set => _camera = value; }
+
+        public PrimitivesBatch(GraphicsDevice graphicsDevice, Camera camera = null)
         {
             _graphicsDevice = graphicsDevice;
             _vertices = new VertexPositionColor[BUFFER_SIZE];
@@ -30,21 +33,18 @@ namespace RainForest.Core
             _indexCount = 0;
             _primitiveCount = 0;
             _hasBegun = false;
+            _camera = camera;
 
-            Matrix v = Matrix.CreateTranslation(-1f, -1f, .0f);
-            Matrix s = Matrix.CreateScale(1f / ((float)Constants.SCREEN_WIDTH / 2f), 1f / ((float)Constants.SCREEN_HEIGHT / 2f), 0f);
             _effect = new BasicEffect(_graphicsDevice);
             _effect.VertexColorEnabled = true;
-            _effect.World = s * v;
-            _effect.View = Matrix.Identity;
-            _effect.Projection = Matrix.Identity;
+            _effect.FogEnabled = false;
+            _effect.LightingEnabled = false;
         }
 
         public void Begin()
         {
             if (_hasBegun)
                 throw new Exception("Primitives batch has already started.");
-
 
             _hasBegun = true;
         }
@@ -91,6 +91,10 @@ namespace RainForest.Core
 
             if (_primitiveCount > 0)
             {
+                _camera?.UpdateMatrices();
+                _effect.View = _camera?.ViewMatrix ?? Matrix.Identity;
+                _effect.Projection= _camera?.ProjectionMatrix ?? Matrix.Identity;
+
                 foreach (EffectPass pass in _effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();

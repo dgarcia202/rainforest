@@ -22,7 +22,7 @@ namespace RainForest.Objects
         public Hero(ContentManager content) : base(content)
         {
             AddComponent("sprite", new Sprite(Content, "Sprite-0001-Sheet", 64, 64));
-            AddComponent("collider-1", new Collider(Content, 29f, 3f, 10f, 50f, Color.Red));
+            AddComponent("collider-1", new Collider(Content, 0f, 0f, 64f, 64f, Color.Red));
         }
 
         public override void Initialize()

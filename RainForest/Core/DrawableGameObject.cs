@@ -21,6 +21,14 @@ namespace RainForest.Core
             }
         }
 
+        public void DrawUI(SpriteBatch spriteBatch)
+        {
+            if (IsVisible)
+            {
+                InternalDrawUI(spriteBatch);
+            }
+        }
+
         public void DrawPrimitives(PrimitivesBatch primitivesBatch)
         {
             if (IsVisible)
@@ -44,6 +52,15 @@ namespace RainForest.Core
             {
                 if (child is DrawableGameObject drawable)
                     drawable.InternalDraw(spriteBatch);
+            }
+        }
+
+        protected virtual void InternalDrawUI(SpriteBatch spriteBatch)
+        {
+            foreach (var child in Children.Values)
+            {
+                if (child is DrawableGameObject drawable)
+                    drawable.InternalDrawUI(spriteBatch);
             }
         }
     }

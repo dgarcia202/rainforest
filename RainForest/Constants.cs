@@ -2,6 +2,6 @@
 
 internal static class Constants
 {
-    public const int SCREEN_WIDTH = 1280;
-    public const int SCREEN_HEIGHT = 720;
+    public const float SCREEN_WIDTH = 1280f;
+    public const float SCREEN_HEIGHT = 720f;
 }
