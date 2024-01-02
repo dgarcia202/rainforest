@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RainForest.Core
 {
@@ -17,10 +18,11 @@ namespace RainForest.Core
         public float Y { get; set; }
         public bool IsVisible { get; set; } = true;
         public GameObject Parent { get => _parent; set => _parent = value; }
-        public float AbsoluteX => X + _parent.X;
-        public float AbsoluteY => Y + _parent.Y;
+        public float AbsoluteX => X + _parent?.AbsoluteX ?? 0f;
+        public float AbsoluteY => Y + _parent?.AbsoluteY ?? 0f;
 
         public Vector2 AbsolutePosition { get => new Vector2(AbsoluteX, AbsoluteY); }
+
         public Vector2 Position { 
             get => new Vector2(X, Y); 
             set
@@ -39,6 +41,24 @@ namespace RainForest.Core
         public GameObject GetComponent(string name)
         {
             return _children.TryGetValue(name, out GameObject obj) ? obj : null;
+        }
+
+        public IEnumerable<T> GetComponents<T>() where T : GameObject
+        {
+            var objects = new List<T>();
+            foreach(var child in _children.Values)
+            {
+                if (child is T obj)
+                {
+                    objects.Add(obj);
+                }
+                else
+                {
+                    objects.AddRange(child.GetComponents<T>());
+                }
+            }
+
+            return objects;
         }
 
         public virtual void Initialize()

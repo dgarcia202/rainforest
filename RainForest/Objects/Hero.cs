@@ -9,20 +9,23 @@ namespace RainForest.Objects
     internal class Hero : DrawableGameObject
     {
         private const float MAX_SPEED = 2.5f;
-        private const float HORIZONTAL_ACCEL = 3.0f;
-        private const float HORIZONTAL_DECCEL = 6.0f;
-
-        private Vector2 _velocity = Vector2.Zero;
 
         private Sprite _sprite;
         private Animation _animationWalk, _animationIdle;
+        private PhysicsBody _physicsBody;
 
-        public Vector2 Velocity { get => _velocity; set => _velocity = value; }
+        public Vector2 Velocity { get => _physicsBody.Velocity; set => _physicsBody.Velocity = value; }
 
         public Hero(ContentManager content) : base(content)
         {
             AddComponent("sprite", new Sprite(Content, "Sprite-0001-Sheet", 64, 64));
-            AddComponent("collider-1", new Collider(Content, 0f, 0f, 64f, 64f, Color.Red));
+            AddComponent("physics-1", new PhysicsBody()
+            {
+                MaxHorizontalSpeed = MAX_SPEED,
+                HorizontalAccel = 3.0f,
+                HorizontalDeccel = 6.0f,
+                HasGravity = true,
+            });
         }
 
         public override void Initialize()
@@ -33,55 +36,23 @@ namespace RainForest.Objects
             _sprite = GetComponent("sprite") as Sprite;
             _sprite.Animation = _animationIdle;
 
-            X = 0f;
-            Y = 0f;
+            _physicsBody = GetComponent("physics-1") as PhysicsBody;
+            _physicsBody.AddComponent("collider-1", new Collider(Content, 0f, 0f, 64f, 64f, Color.Red));
 
             base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
         {
-            // Movement
             float leftStick = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X;
-            float ellapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalMilliseconds);
+            Vector2 velocity = _physicsBody.Velocity;
 
-            if (leftStick != 0f) // There´s horizontal move input.
-            {
+            if (leftStick != 0f)
                 _sprite.FlipHorizontally = !(leftStick > 0f);
 
-                _velocity.X += (HORIZONTAL_ACCEL * (ellapsedTime / 1000f));
-                if (_velocity.X > (MAX_SPEED * leftStick))
-                {
-                    _velocity.X = (MAX_SPEED * leftStick);
-                }
-                else if (_velocity.X < -(MAX_SPEED * leftStick))
-                {
-                    _velocity.X = -(MAX_SPEED * leftStick);
-                }
-            }
-            else if (_velocity.X != 0.0)    // There´s no input for horizontal move decceleration quicks in.
+            if (velocity.X != 0f)
             {
-                float delta = (HORIZONTAL_DECCEL * (ellapsedTime / 1000f));
-                if (_velocity.X > 0f)
-                {
-                    _velocity.X = _velocity.X > delta ?
-                        (_velocity.X - delta) :
-                        0f;
-                }
-                else
-                {
-                    _velocity.X = _velocity.X + delta <= 0f ?
-                        (_velocity.X + delta) :
-                        0f;
-                }
-            }
-
-            X += _velocity.X;
-
-            // Animation
-            if (_velocity.X != 0f)
-            {
-                _animationWalk.AnimationSpeedFactor = 2 - (Math.Abs(_velocity.X) / MAX_SPEED);
+                _animationWalk.AnimationSpeedFactor = 2 - (Math.Abs(velocity.X) / MAX_SPEED);
                 _sprite.Animation = _animationWalk;
             }
             else

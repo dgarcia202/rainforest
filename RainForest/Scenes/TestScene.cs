@@ -13,6 +13,7 @@ namespace RainForest.Scenes
         private SpriteFont _font;
         private Hero _hero;
         private Camera _camera;
+        private PhysicsBody _physicsBody;
 
         private float _leftStickX;
         private float _rightStickY;
@@ -30,7 +31,11 @@ namespace RainForest.Scenes
         public override void Initialize()
         {
             _hero = GetComponent("hero") as Hero;
+            _hero.Y = 90f;
             _camera.ToFollow = _hero;
+
+            _physicsBody = _hero.GetComponent("physics-1") as PhysicsBody;
+            _physicsBody.GeometrySource = this;
 
             base.Initialize();
         }
@@ -53,7 +58,7 @@ namespace RainForest.Scenes
         {
             var sb = new StringBuilder();
             sb.Append($"FPS: {_fps:0}\r\n");
-            sb.Append($"Controller Connected: {GamePad.GetState(PlayerIndex.One).IsConnected.ToString()}\r\n");
+            sb.Append($"Grounded: {_physicsBody.IsGrounded}\r\n");
             sb.Append($"Velocity: X:{_hero.Velocity.X:0.000},Y:{_hero.Velocity.Y:0.000}\r\n");
             sb.Append($"Joy LX: {_leftStickX:0.000}\r\n");
             sb.Append($"Joy RY: {_rightStickY:0.000}\r\n");
