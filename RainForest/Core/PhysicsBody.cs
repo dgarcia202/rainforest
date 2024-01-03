@@ -10,6 +10,7 @@ namespace RainForest.Core
     public class PhysicsBody : DrawableGameObject
     {
         private Vector2 _velocity;
+        private Vector2 _force;
         private bool _hasGravity;
         private bool _isGrounded;
         private float _maxHorizontalSpeed;
@@ -26,6 +27,7 @@ namespace RainForest.Core
         public float MaxHorizontalSpeed { get => _maxHorizontalSpeed; set => _maxHorizontalSpeed = value; }
         public float HorizontalAccel { get => _horizontalAccel; set => _horizontalAccel = value; }
         public float HorizontalDeccel { get => _horizontalDeccel; set => _horizontalDeccel = value; }
+        public float HorizontalForce { get => _force.X; set => _force = new Vector2(value, _force.Y); }
         public GameObject GeometrySource { get => _geometrySource; set => _geometrySource = value; }
         public bool IsGrounded { get => _isGrounded; }
         protected override IEnumerable<PrimitiveRect> Shapes =>
@@ -55,6 +57,8 @@ namespace RainForest.Core
                 Convert.ToInt32(_width),
                 1);
 
+        public Vector2 Force { get => _force; set => _force = value; }
+
         public PhysicsBody(ContentManager content, float width, float height) : base(content)
         {
             _hasGravity = false;
@@ -66,6 +70,7 @@ namespace RainForest.Core
             _width = width;
             _height = height;
             _color = Color.White;
+            _force = Vector2.Zero;
         }
 
         public PhysicsBody(ContentManager content, float x, float y, float width, float height) : this(content, width, height)
@@ -74,22 +79,23 @@ namespace RainForest.Core
             Y = y;
         }
 
+        public void AddForce(Vector2 additionalForce) => _force += additionalForce;
+
         public override void Update(GameTime gameTime)
         {
             // Movement.
-            float leftStick = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X;
             float timeFactor = Convert.ToSingle(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000f;
 
-            if (leftStick != 0f)    // Movement input exists. We update our velocity if not at MAX.
+            if (_force.X != 0f)    // Movement input exists. We update our velocity if not at MAX.
             {
                 _velocity.X += (_horizontalAccel * timeFactor);
-                if (_velocity.X > (_maxHorizontalSpeed * leftStick))
+                if (_velocity.X > (_maxHorizontalSpeed * _force.X))
                 {
-                    _velocity.X = (_maxHorizontalSpeed * leftStick);
+                    _velocity.X = (_maxHorizontalSpeed * _force.X);
                 }
-                else if (_velocity.X < -(_maxHorizontalSpeed * leftStick))
+                else if (_velocity.X < -(_maxHorizontalSpeed * _force.X))
                 {
-                    _velocity.X = -(_maxHorizontalSpeed * leftStick);
+                    _velocity.X = -(_maxHorizontalSpeed * _force.X);
                 }
             }
             else if (_velocity.X != 0.0)    // No movement input. deceleration happens.

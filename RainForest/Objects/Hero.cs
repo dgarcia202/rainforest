@@ -43,15 +43,14 @@ namespace RainForest.Objects
 
         public override void Update(GameTime gameTime)
         {
-            float leftStick = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X;
-            Vector2 velocity = _physicsBody.Velocity;
+            _physicsBody.HorizontalForce = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X;
 
-            if (leftStick != 0f)
-                _sprite.FlipHorizontally = !(leftStick > 0f);
+            if (_physicsBody.HorizontalForce != 0f)
+                _sprite.FlipHorizontally = !(_physicsBody.HorizontalForce > 0f);
 
-            if (velocity.X != 0f)
+            if (_physicsBody.Velocity.X != 0f)
             {
-                _animationWalk.AnimationSpeedFactor = 2 - (Math.Abs(velocity.X) / MAX_SPEED);
+                _animationWalk.AnimationSpeedFactor = 2 - (Math.Abs(_physicsBody.Velocity.X) / MAX_SPEED);
                 _sprite.Animation = _animationWalk;
             }
             else
