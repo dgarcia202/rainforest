@@ -26,6 +26,8 @@ namespace RainForest.Scenes
             AddComponent("hero", new Hero(content));
             AddComponent("block-1", new Block(Content, 0f, -64f, 64f, 64f));
             AddComponent("block-2", new Block(Content, 64f, -80f, 120f, 35f));
+            AddComponent("block-3", new Block(Content, 188f, -110f, 100f, 25f));
+            AddComponent("block-4", new Block(Content, 288f, -110f, 30f, 80f));
         }
 
         public override void Initialize()
@@ -51,6 +53,7 @@ namespace RainForest.Scenes
             _leftStickX = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X;
             _rightStickY = GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.Y;
             _fps = 1000d / gameTime.ElapsedGameTime.TotalMilliseconds;
+
             base.Update(gameTime);
         }
 

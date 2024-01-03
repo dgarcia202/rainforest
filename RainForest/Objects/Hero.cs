@@ -19,7 +19,7 @@ namespace RainForest.Objects
         public Hero(ContentManager content) : base(content)
         {
             AddComponent("sprite", new Sprite(Content, "Sprite-0001-Sheet", 64, 64));
-            AddComponent("physics-1", new PhysicsBody()
+            AddComponent("physics-1", new PhysicsBody(Content, 25f, 0f, 14f, 64f)
             {
                 MaxHorizontalSpeed = MAX_SPEED,
                 HorizontalAccel = 3.0f,
@@ -37,7 +37,6 @@ namespace RainForest.Objects
             _sprite.Animation = _animationIdle;
 
             _physicsBody = GetComponent("physics-1") as PhysicsBody;
-            _physicsBody.AddComponent("collider-1", new Collider(Content, 0f, 0f, 64f, 64f, Color.Red));
 
             base.Initialize();
         }

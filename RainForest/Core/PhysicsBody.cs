@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using RainForest.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace RainForest.Core
 {
-    public class PhysicsBody : GameObject
+    public class PhysicsBody : DrawableGameObject
     {
         private Vector2 _velocity;
         private bool _hasGravity;
@@ -16,6 +18,8 @@ namespace RainForest.Core
         private float _fallAccel;
         private float _maxFallSpeed;
         private GameObject _geometrySource;     // Collisions will take into account all the colliders under this object.
+        private float _width, _height;
+        private Color _color;
 
         public Vector2 Velocity { get => _velocity; set => _velocity = value; }
         public bool HasGravity { get => _hasGravity; set => _hasGravity = value; }
@@ -24,8 +28,34 @@ namespace RainForest.Core
         public float HorizontalDeccel { get => _horizontalDeccel; set => _horizontalDeccel = value; }
         public GameObject GeometrySource { get => _geometrySource; set => _geometrySource = value; }
         public bool IsGrounded { get => _isGrounded; }
+        protected override IEnumerable<PrimitiveRect> Shapes =>
+            new PrimitiveRect[] { 
+                new PrimitiveRect(AbsoluteX, AbsoluteY, _width, _height, _color),
+                RightDetectionRect.ToPrimitiveRect(Color.Green),
+                LeftDetectionRect.ToPrimitiveRect(Color.Yellow),
+                BottomDetectionRect.ToPrimitiveRect(Color.Blue)
+            };
 
-        public PhysicsBody()
+        public Color Color { get => _color; set => _color = value; }
+        public Rectangle RightDetectionRect => new Rectangle(
+                    Convert.ToInt32(AbsoluteX + _width),
+                    Convert.ToInt32(AbsoluteY + 2f),
+                    1,
+                    Convert.ToInt32(_height));
+
+        public Rectangle LeftDetectionRect => new Rectangle(
+                    Convert.ToInt32(AbsoluteX - 1f),
+                    Convert.ToInt32(AbsoluteY + 2f),
+                    1,
+                    Convert.ToInt32(_height));
+
+        public Rectangle BottomDetectionRect => new Rectangle(
+                Convert.ToInt32(AbsoluteX),
+                Convert.ToInt32(AbsoluteY - 1),
+                Convert.ToInt32(_width),
+                1);
+
+        public PhysicsBody(ContentManager content, float width, float height) : base(content)
         {
             _hasGravity = false;
             _maxHorizontalSpeed = 0f;
@@ -33,15 +63,24 @@ namespace RainForest.Core
             _horizontalDeccel = 0f;
             _fallAccel = 7f;
             _maxFallSpeed = 4f;
+            _width = width;
+            _height = height;
+            _color = Color.White;
+        }
+
+        public PhysicsBody(ContentManager content, float x, float y, float width, float height) : this(content, width, height)
+        {
+            X = x;
+            Y = y;
         }
 
         public override void Update(GameTime gameTime)
         {
-            // Movement
+            // Movement.
             float leftStick = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X;
             float timeFactor = Convert.ToSingle(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000f;
 
-            if (leftStick != 0f)
+            if (leftStick != 0f)    // Movement input exists. We update our velocity if not at MAX.
             {
                 _velocity.X += (_horizontalAccel * timeFactor);
                 if (_velocity.X > (_maxHorizontalSpeed * leftStick))
@@ -53,7 +92,7 @@ namespace RainForest.Core
                     _velocity.X = -(_maxHorizontalSpeed * leftStick);
                 }
             }
-            else if (_velocity.X != 0.0)
+            else if (_velocity.X != 0.0)    // No movement input. deceleration happens.
             {
                 float delta = (_horizontalDeccel * timeFactor);
                 if (_velocity.X > 0f)
@@ -70,10 +109,28 @@ namespace RainForest.Core
                 }
             }
 
-            // Gravity
+            // Detect collisions.
+            var geometry = _geometrySource.GetComponents<Collider>();
+            foreach (Collider col in geometry)
+            {
+                var geometryRect = new Rectangle(Convert.ToInt32(col.AbsoluteX), Convert.ToInt32(col.AbsoluteY),
+                    Convert.ToInt32(col.Width), Convert.ToInt32(col.Height));
+
+                if (_velocity.X < 0f && geometryRect.Intersects(LeftDetectionRect))
+                {
+                    _velocity.X = 0f;
+                }
+
+                else if ((_velocity.X > 0f && geometryRect.Intersects(RightDetectionRect)))
+                {
+                    _velocity.X = 0f;
+                }
+            }
+
+            // Gravity.
             if (HasGravity)
             {
-                CheckGrounded();
+                CheckGrounded(geometry);
                 if (!_isGrounded)
                 {
                     _velocity.Y -= (_fallAccel * timeFactor);
@@ -91,31 +148,16 @@ namespace RainForest.Core
             base.Update(gameTime);
         }
 
-        private void CheckGrounded()
+        private void CheckGrounded(IEnumerable<Collider> geometry)
         {
-            var self = GetComponents<Collider>();
-            var geometry = _geometrySource.GetComponents<Collider>();
-            Collider lowestSelfCollider = null;
             bool isGroundedTentative = false;
 
-            foreach (var col in self)
+            foreach (Collider col in geometry)
             {
-                if (lowestSelfCollider is null)
-                    lowestSelfCollider = col;
-                else
-                {
-                    if (col.Y < lowestSelfCollider.AbsoluteY)
-                        lowestSelfCollider = col;
-                }
-            }
+                var geometryRect = new Rectangle(Convert.ToInt32(col.AbsoluteX), Convert.ToInt32(col.AbsoluteY),
+                    Convert.ToInt32(col.Width), Convert.ToInt32(col.Height));
 
-            foreach(Collider col in geometry)
-            {
-                if (Object.ReferenceEquals(col, lowestSelfCollider))
-                    continue;
-
-                var rect = new Rectangle((int)col.AbsoluteX, (int)col.AbsoluteY, (int)col.Width, (int)col.Height);
-                if (rect.Contains(lowestSelfCollider.AbsoluteX + (lowestSelfCollider.Width * 0.5f), lowestSelfCollider.AbsoluteY - 1))
+                if (geometryRect.Intersects(BottomDetectionRect))
                 {
                     isGroundedTentative = true;
                     break;
