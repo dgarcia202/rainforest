@@ -28,6 +28,7 @@ namespace RainForest.Core
         public float HorizontalAccel { get => _horizontalAccel; set => _horizontalAccel = value; }
         public float HorizontalDeccel { get => _horizontalDeccel; set => _horizontalDeccel = value; }
         public float HorizontalForce { get => _force.X; set => _force = new Vector2(value, _force.Y); }
+        public float VerticalForce { get => _force.Y; set => _force = new Vector2(_force.X, value); }
         public GameObject GeometrySource { get => _geometrySource; set => _geometrySource = value; }
         public bool IsGrounded { get => _isGrounded; }
         protected override IEnumerable<PrimitiveRect> Shapes =>
@@ -86,32 +87,40 @@ namespace RainForest.Core
             // Movement.
             float timeFactor = Convert.ToSingle(gameTime.ElapsedGameTime.TotalMilliseconds) / 1000f;
 
-            if (_force.X != 0f)    // Movement input exists. We update our velocity if not at MAX.
+            if (IsGrounded)
             {
-                _velocity.X += (_horizontalAccel * timeFactor);
-                if (_velocity.X > (_maxHorizontalSpeed * _force.X))
+                if (_force.X != 0f)    // Movement input exists. We update our velocity if not at MAX.
                 {
-                    _velocity.X = (_maxHorizontalSpeed * _force.X);
+                    _velocity.X += (_horizontalAccel * timeFactor);
+                    if (_velocity.X > (_maxHorizontalSpeed * _force.X))
+                    {
+                        _velocity.X = (_maxHorizontalSpeed * _force.X);
+                    }
+                    else if (_velocity.X < -(_maxHorizontalSpeed * _force.X))
+                    {
+                        _velocity.X = -(_maxHorizontalSpeed * _force.X);
+                    }
                 }
-                else if (_velocity.X < -(_maxHorizontalSpeed * _force.X))
+                else if (_velocity.X != 0.0)    // No movement input. deceleration happens.
                 {
-                    _velocity.X = -(_maxHorizontalSpeed * _force.X);
+                    float delta = (_horizontalDeccel * timeFactor);
+                    if (_velocity.X > 0f)
+                    {
+                        _velocity.X = _velocity.X > delta ?
+                            (_velocity.X - delta) :
+                            0f;
+                    }
+                    else
+                    {
+                        _velocity.X = _velocity.X + delta <= 0f ?
+                            (_velocity.X + delta) :
+                            0f;
+                    }
                 }
-            }
-            else if (_velocity.X != 0.0)    // No movement input. deceleration happens.
-            {
-                float delta = (_horizontalDeccel * timeFactor);
-                if (_velocity.X > 0f)
+
+                if (_force.Y > 0)
                 {
-                    _velocity.X = _velocity.X > delta ?
-                        (_velocity.X - delta) :
-                        0f;
-                }
-                else
-                {
-                    _velocity.X = _velocity.X + delta <= 0f ?
-                        (_velocity.X + delta) :
-                        0f;
+                    _velocity.Y += (_force.Y * timeFactor);
                 }
             }
 
@@ -145,7 +154,7 @@ namespace RainForest.Core
                         _velocity.Y = -_maxFallSpeed;
                     }
                 }
-                else
+                else if (_velocity.Y < 0f)
                     _velocity.Y = 0f;
             }
 

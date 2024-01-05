@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RainForest.Core
 {
-    internal abstract class Animation : GameObject
+    public abstract class Animation : GameObject
     {
         private Sprite _sprite;
         private int _frameX;

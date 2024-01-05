@@ -4,7 +4,7 @@ using RainForest.Core;
 
 namespace RainForest.Animations
 {
-    internal class HeroWalk : Animation
+    public class HeroWalk : Animation
     {
         private const int LAST_FRAME = 5;
 

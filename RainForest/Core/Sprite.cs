@@ -5,7 +5,7 @@ using System;
 
 namespace RainForest.Core
 {
-    internal class Sprite : DrawableGameObject
+    public class Sprite : DrawableGameObject
     {
         private Texture2D _sheet;
         private readonly string _textureName;
