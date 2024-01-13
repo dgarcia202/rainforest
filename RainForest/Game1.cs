@@ -95,6 +95,11 @@ namespace RainForest
             _scene.DrawPrimitives(_primitivesBatch);
             _primitivesBatch.End();
 
+            // UI
+            _spriteBatch.Begin();
+            _scene.DrawUI(_spriteBatch);
+            _spriteBatch.End();
+
             base.Draw(gameTime);
         }
     }

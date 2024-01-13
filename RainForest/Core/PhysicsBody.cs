@@ -16,7 +16,6 @@ namespace RainForest.Core
         private float _maxHorizontalSpeed;
         private float _horizontalAccel;
         private float _horizontalDeccel;
-        private float _verticalDeccel;
         private float _fallAccel;
         private float _maxFallSpeed;
         private GameObject _geometrySource;     // Collisions will take into account all the colliders under this object.
