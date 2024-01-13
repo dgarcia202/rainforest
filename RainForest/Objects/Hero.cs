@@ -13,8 +13,6 @@ namespace RainForest.Objects
         private Sprite _sprite;
         private Animation _animationWalk, _animationIdle, _animationFall;
         private PhysicsBody _physicsBody;
-        private double _jumpTime;
-        private bool _jumpState;
         private bool _useController;
 
         public Vector2 Velocity { get => _physicsBody.Velocity; set => _physicsBody.Velocity = value; }
@@ -86,16 +84,7 @@ namespace RainForest.Objects
 
             if (_physicsBody.IsGrounded && JumpInput)
             {
-                _jumpTime = gameTime.TotalGameTime.TotalMilliseconds;
-                _jumpState = true;
-                _physicsBody.VerticalForce = 7.5f;
-            }
-
-            if (_jumpState && 
-                gameTime.TotalGameTime.TotalMilliseconds - _jumpTime > 1000 &&
-                _physicsBody.VerticalForce > 0f)
-            {
-                _physicsBody.VerticalForce = 0f;
+                _physicsBody.Velocity += new Vector2(0f, 3f);
             }
 
             if (!_physicsBody.IsGrounded)

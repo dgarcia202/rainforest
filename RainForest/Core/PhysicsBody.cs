@@ -120,13 +120,6 @@ namespace RainForest.Core
                 }
             }
 
-            if (_force.Y != 0)
-            {
-                _velocity.Y += (_force.Y * timeFactor);
-                if (_velocity.Y > _maxFallSpeed)
-                    _velocity.Y = _maxFallSpeed;
-            }
-
             // Detect collisions.
             var geometry = _geometrySource.GetComponents<Collider>();
             foreach (Collider col in geometry)
