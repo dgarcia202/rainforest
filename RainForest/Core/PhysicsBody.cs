@@ -16,6 +16,7 @@ namespace RainForest.Core
         private float _maxHorizontalSpeed;
         private float _horizontalAccel;
         private float _horizontalDeccel;
+        private float _verticalDeccel;
         private float _fallAccel;
         private float _maxFallSpeed;
         private GameObject _geometrySource;     // Collisions will take into account all the colliders under this object.
@@ -101,7 +102,7 @@ namespace RainForest.Core
                         _velocity.X = -(_maxHorizontalSpeed * _force.X);
                     }
                 }
-                else if (_velocity.X != 0.0)    // No movement input. deceleration happens.
+                else if (_velocity.X != 0.0)    // No movement input. Horizontal deceleration happens.
                 {
                     float delta = (_horizontalDeccel * timeFactor);
                     if (_velocity.X > 0f)
@@ -117,11 +118,13 @@ namespace RainForest.Core
                             0f;
                     }
                 }
+            }
 
-                if (_force.Y > 0)
-                {
-                    _velocity.Y += (_force.Y * timeFactor);
-                }
+            if (_force.Y != 0)
+            {
+                _velocity.Y += (_force.Y * timeFactor);
+                if (_velocity.Y > _maxFallSpeed)
+                    _velocity.Y = _maxFallSpeed;
             }
 
             // Detect collisions.
@@ -134,11 +137,13 @@ namespace RainForest.Core
                 if (_velocity.X < 0f && geometryRect.Intersects(LeftDetectionRect))
                 {
                     _velocity.X = 0f;
+                    Parent.Position += new Vector2((col.AbsoluteX + col.Width) - AbsoluteX, 0f);
                 }
 
                 else if ((_velocity.X > 0f && geometryRect.Intersects(RightDetectionRect)))
                 {
                     _velocity.X = 0f;
+                    Parent.Position += new Vector2(-(AbsoluteX + _width - col.AbsoluteX), 0f);
                 }
             }
 
@@ -149,7 +154,7 @@ namespace RainForest.Core
                 if (!_isGrounded)
                 {
                     _velocity.Y -= (_fallAccel * timeFactor);
-                    if (_velocity.Y > _maxFallSpeed)
+                    if (_velocity.Y < -_maxFallSpeed)
                     {
                         _velocity.Y = -_maxFallSpeed;
                     }
@@ -174,6 +179,7 @@ namespace RainForest.Core
 
                 if (geometryRect.Intersects(BottomDetectionRect))
                 {
+                    Parent.Position += new Vector2(0f, -(AbsoluteY - (col.AbsoluteY + col.Height)));
                     isGroundedTentative = true;
                     break;
                 }

@@ -63,6 +63,7 @@ namespace RainForest.Scenes
             sb.Append($"FPS: {_fps:0}\r\n");
             sb.Append($"Grounded: {_physicsBody.IsGrounded}\r\n");
             sb.Append($"Velocity: X:{_hero.Velocity.X:0.000},Y:{_hero.Velocity.Y:0.000}\r\n");
+            sb.Append($"Force: X:{_physicsBody.Force.X:0.000},Y:{_physicsBody.Force.Y:0.000}\r\n");
             sb.Append($"Joy LX: {_leftStickX:0.000}\r\n");
             sb.Append($"Joy RY: {_rightStickY:0.000}\r\n");
             sb.Append($"Hero: X:{_hero.X:0.000},Y:{_hero.Y:0.000}\r\n");
