@@ -53,9 +53,9 @@ namespace RainForest.Core
                     Convert.ToInt32(_height));
 
         public Rectangle BottomDetectionRect => new Rectangle(
-                Convert.ToInt32(AbsoluteX),
+                Convert.ToInt32(AbsoluteX + 2f),
                 Convert.ToInt32(AbsoluteY - 1),
-                Convert.ToInt32(_width),
+                Convert.ToInt32(_width - 4f),
                 1);
 
         public Vector2 Force { get => _force; set => _force = value; }

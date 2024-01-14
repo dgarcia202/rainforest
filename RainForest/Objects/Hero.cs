@@ -9,6 +9,7 @@ namespace RainForest.Objects
     internal class Hero : DrawableGameObject
     {
         private const float MAX_SPEED = 2.5f;
+        private const float JUMP_INITIAL_SPEED = 2.5f;
 
         private Sprite _sprite;
         private Animation _animationWalk, _animationIdle, _animationFall;
@@ -50,7 +51,7 @@ namespace RainForest.Objects
         public Hero(ContentManager content) : base(content)
         {
             AddComponent("sprite", new Sprite(Content, "Sprite-0001-Sheet", 64, 64));
-            AddComponent("physics-1", new PhysicsBody(Content, 25f, 0f, 14f, 64f)
+            AddComponent("physics-1", new PhysicsBody(Content, 25f, 0f, 14f, 56f)
             {
                 MaxHorizontalSpeed = MAX_SPEED,
                 HorizontalAccel = 3.0f,
@@ -84,7 +85,7 @@ namespace RainForest.Objects
 
             if (_physicsBody.IsGrounded && JumpInput)
             {
-                _physicsBody.Velocity += new Vector2(0f, 3f);
+                _physicsBody.Velocity += new Vector2(0f, JUMP_INITIAL_SPEED);
             }
 
             if (!_physicsBody.IsGrounded)
