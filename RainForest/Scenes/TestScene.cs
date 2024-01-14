@@ -28,7 +28,6 @@ namespace RainForest.Scenes
             AddComponent("block-2", new Block(Content, 64f, -80f, 120f, 35f));
             AddComponent("block-3", new Block(Content, 188f, -110f, 100f, 25f));
             AddComponent("block-4", new Block(Content, 288f, -110f, 30f, 80f));
-
             AddComponent("block-5", new Block(Content, -64f, -64f, 64f, 380f));
             AddComponent("block-6", new Block(Content, 320f, -110f, 230f, 80f, Color.Red));
             AddComponent("block-7", new Block(Content, 550f, -50f, 230f, 80f, Color.Red));

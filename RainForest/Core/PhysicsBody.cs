@@ -119,8 +119,26 @@ namespace RainForest.Core
                 }
             }
 
-            // Detect collisions.
+            // Optain level geometry.
             var geometry = _geometrySource.GetComponents<Collider>();
+
+            // Gravity.
+            if (HasGravity)
+            {
+                CheckGrounded(geometry);
+                if (!_isGrounded)
+                {
+                    _velocity.Y -= (_fallAccel * timeFactor);
+                    if (_velocity.Y < -_maxFallSpeed)
+                    {
+                        _velocity.Y = -_maxFallSpeed;
+                    }
+                }
+                else if (_velocity.Y < 0f)
+                    _velocity.Y = 0f;
+            }
+
+            // Detect collisions.
             foreach (Collider col in geometry)
             {
                 var geometryRect = new Rectangle(Convert.ToInt32(col.AbsoluteX), Convert.ToInt32(col.AbsoluteY),
@@ -137,22 +155,6 @@ namespace RainForest.Core
                     _velocity.X = 0f;
                     Parent.Position += new Vector2(-(AbsoluteX + _width - col.AbsoluteX), 0f);
                 }
-            }
-
-            // Gravity.
-            if (HasGravity)
-            {
-                CheckGrounded(geometry);
-                if (!_isGrounded)
-                {
-                    _velocity.Y -= (_fallAccel * timeFactor);
-                    if (_velocity.Y < -_maxFallSpeed)
-                    {
-                        _velocity.Y = -_maxFallSpeed;
-                    }
-                }
-                else if (_velocity.Y < 0f)
-                    _velocity.Y = 0f;
             }
 
             Parent.Position += _velocity;

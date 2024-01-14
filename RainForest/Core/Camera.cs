@@ -30,7 +30,6 @@ namespace RainForest.Core
             UpdateMatrices();
         }
 
-        public Vector2 Position { get => _position; }
         public float Z { get => _z; }
         public Matrix ViewMatrix { get => _viewMatrix; }
         public Matrix ProjectionMatrix { get => _projectionMatrix; }
